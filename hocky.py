@@ -85,6 +85,7 @@ class Ball():
         if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
             self.vy *= -1.05 #反射と加速
             self.vx *= 1.05  #加速
+
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
             self.vy *= -0.95 #反射と減速
             self.vx *= 0.95  #減速
@@ -134,6 +135,7 @@ def main():
     blue_goal   = Goal_Left((5, 450))
     mirror_up = Mirror((screen.width/2,1),(255, 130, 0),200,10) #加速ギミックコンストラクタ
     mirror_down = Mirror((screen.width/2,screen.height-1),(0,191,255),200,10) #減速ギミックコンストラクタ
+
     #  変数の定義
     score_red, score_blue = 0, 0      #  青と赤の得点の初期値
     counter_time = 33                 #  試合時間の初期値
