@@ -113,7 +113,7 @@ class Mirror(): #ギミック　関恵尚
 def main():
     #  コンストラクタを呼び出す 
     clock       = pg.time.Clock()
-    screen      = Screen((1550, 800), "ホッケー")  
+    screen      = Screen((1600, 900), "ホッケー")  
     mallet_red  = Mallet_red((1300, 450))                      
     mallet_blue = Mallet_blue((300, 450))                   
     ball        = Ball((0, 255 ,0), 25, (+2, +2))       
