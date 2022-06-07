@@ -151,12 +151,42 @@ def main():
 
             if pg.sprite.collide_rect(ball,red_goal) :
             #  ボールと赤ゴールが当たったら
+                # C0B21078
+                font = pg.font.Font(None, 100)
+                text = "BLUE GOAL!"
+                text = font.render(text, True, (0, 0, 255))
+                text_rect = text.get_rect()       # Rect
+                text_rect.center = screen.width/2, screen.height/2
+                screen.disp.blit(text, text_rect) # 「BLUE GOAL!」と表示
+                ball.vx *= -1           # 横方向速度の符号反転
+                ball.vy *= -1           # 縦方向速度の符号反転
+                ball.rect.center = screen.width/2, screen.height/2 
+                # C0B21078ここまで
                 score_blue += 1    #  青の得点を増やす
                 sounds[2].play()   #  効果音の再生
+                # C0B21078
+                pg.display.update()
+                pg.time.delay(1000)
+                # C0B21078ここまで
             if pg.sprite.collide_rect(ball, blue_goal):
             #  ボールと青ゴールが当たったら
+                # C0B21078
+                font = pg.font.Font(None, 100)
+                text = "RED GOAL!"
+                text = font.render(text, True, (255, 0, 0))
+                text_rect = text.get_rect()       # Rect
+                text_rect.center = screen.width/2, screen.height/2
+                screen.disp.blit(text, text_rect) # 「RED GOAL!」と表示
+                ball.vx *= -1           # 横方向速度の符号反転
+                ball.vy *= -1           # 縦方向速度の符号反転
+                ball.rect.center = screen.width/2, screen.height/2
+                # C0B21078ここまで
                 score_red += 1     #  赤の得点を増やす
                 sounds[2].play()   #  効果音の再生
+                # C0B21078
+                pg.display.update()
+                pg.time.delay(1000)
+                # C0B21078ここまで
         #  試合後の挙動
         else:
             sounds[0].stop()       #  BGMを止める
