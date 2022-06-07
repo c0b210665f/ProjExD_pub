@@ -1,6 +1,11 @@
 from turtle import color
 import pygame as pg
 
+#C0B21116
+clock = pg.time.Clock()           #clock関数の設定
+start_time = pg.time.get_ticks()
+#C0B21116
+
 
 class Screen:
     def __init__(self, wh, title):
@@ -72,12 +77,24 @@ class Ball():
         self.rect.centery = 50
         self.vx, self.vy  = vxy
 
-    def update(self, screen):
+    def update(self, screen,mirror_up,mirror_down):
         self.rect.move_ip(self.vx, self.vy)
         x, y = check_bound(screen.rect, self.rect)
         self.vx *= x                                  #  横方向に画面外なら，横方向速度の符号反転 
         self.vy *= y                                  #  縦方向に画面外なら，縦方向速度の符号反転
-
+        if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
+            self.vy *= -1.05 #反射と加速
+            self.vx *= 1.05  #加速
+        if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
+            self.vy *= -0.95 #反射と減速
+            self.vx *= 0.95  #減速
+        
+        #C0B21116
+        time_passed = pg.time.get_ticks() - start_time
+        time_sec = time_passed / 1000.0
+        #ボールの速度を徐々に加速指せる
+        self.rect.move_ip(self.vx*time_sec/20, self.vy*time_sec/20)
+        #C0B21116
 
 class Goal_Right():
     def __init__(self, Rgoal_xy):
@@ -96,6 +113,16 @@ class Goal_Left(Goal_Right):
         self.rect.centerx, self.rect.centery = Lgoal_xy
 
 
+class Mirror(): #ギミック　関恵尚
+    def __init__(self, mxy,color, l,h):
+        #座標,色,長さ,高さ
+        self.img = pg.Surface((l,h)) #Surface rectのサイズ
+        self.img.set_colorkey((0,0,0)) #透過
+        pg.draw.rect(self.img,color,(0,0,l,h)) #四角生成
+        self.rect = self.img.get_rect() #rect
+        self.rect.centerx, self.rect.centery= mxy #中心座標
+
+
 def main():
     #  コンストラクタを呼び出す 
     clock       = pg.time.Clock()
@@ -105,6 +132,8 @@ def main():
     ball        = Ball((0, 255 ,0), 25, (+2, +2))       
     red_goal    = Goal_Right((1595, 450))
     blue_goal   = Goal_Left((5, 450))
+    mirror_up = Mirror((screen.width/2,1),(255, 130, 0),200,10) #加速ギミックコンストラクタ
+    mirror_down = Mirror((screen.width/2,screen.height-1),(0,191,255),200,10) #減速ギミックコンストラクタ
     #  変数の定義
     score_red, score_blue = 0, 0      #  青と赤の得点の初期値
     counter_time = 33                 #  試合時間の初期値
@@ -123,6 +152,8 @@ def main():
         screen.disp.fill((0, 0, 0))                  #  スクリーンを黒に塗りつぶし
         for event in pg.event.get():
             if event.type == pg.QUIT: return         #  ✕ボタンでmain関数から戻る 
+            if event.type == pg.KEYDOWN and event.key == pg.K_x:#xボタンで 関恵尚
+                    return
             if event.type == pg.USEREVENT:           #  １秒ごとにカウントする
                     counter_time -= 1
                     counter_start_time -= 1
@@ -139,11 +170,14 @@ def main():
             mallet_blue.update(screen) 
             screen.disp.blit(mallet_blue.image, mallet_blue.rect)
             #  ボールを表示
-            ball.update(screen)
+            ball.update(screen,mirror_up,mirror_down)
             screen.disp.blit(ball.image, ball.rect)
             #  ゴールを左右に表示
             screen.disp.blit(red_goal.image, red_goal.rect)
             screen.disp.blit(blue_goal.image, blue_goal.rect)
+            #ギミック表示 
+            screen.disp.blit(mirror_up.img,mirror_up.rect) #描画
+            screen.disp.blit(mirror_down.img,mirror_down.rect)
             #　関数の呼び出し
             score(score_red, score_blue, screen)
             red_bound(ball, mallet_red, sounds)
@@ -163,6 +197,7 @@ def main():
             sounds[0].stop()       #  BGMを止める
             sounds[1].stop()       #  効果音がならないようにする
             owari(score_red, score_blue, screen)
+        
 
         pg.display.update()  
         clock.tick(1000) 
