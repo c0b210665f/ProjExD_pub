@@ -29,7 +29,7 @@ class Mallet_red():
         self.image.set_colorkey((0,0,0))              #  黒色部分を透過する
         pg.draw.rect(self.image, (255, 0, 0), (0, 0, 80, 80))
         self.rect  = self.image.get_rect()  #Rectクラス
-        self.rect.centerx, self.rect.centery = red_xy
+        self.rect.center = red_xy
     
     def update(self, screen):
         key_states = pg.key.get_pressed()
@@ -53,7 +53,7 @@ class Mallet_blue(Mallet_red):
         # blue_xy:青マレットの座標タプル
         super().__init__(blue_xy)
         pg.draw.rect(self.image, (0, 0, 255), (0, 0, 80, 80))
-        self.rect.centerx, self.rect.centery = blue_xy
+        self.rect.center = blue_xy
 
     def update(self, screen):
         key_states = pg.key.get_pressed()
@@ -85,21 +85,16 @@ class Ball():
         if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
             self.vy *= -1.05 #反射と加速
             self.vx *= 1.05  #加速
+
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
             self.vy *= -0.95 #反射と減速
             self.vx *= 0.95  #減速
-            self.vy *= -1.2 #反射と加速
-            self.vx *= 1.2  #加速
-        if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
-            self.vy *= -0.9 #反射と減速
-            self.vx *= 0.9  #減速
         
         #C0B21116
         time_passed = pg.time.get_ticks() - start_time
         time_sec = time_passed / 1000.0
         #ボールの速度を徐々に加速指せる
         self.rect.move_ip(self.vx*time_sec/20, self.vy*time_sec/20)
-        self.rect.move_ip(self.vx*time_sec/7, self.vy*time_sec/7)
         #C0B21116
 
 class Goal_Right():
@@ -109,14 +104,14 @@ class Goal_Right():
         self.image.set_colorkey((0, 0, 0))
         pg.draw.rect(self.image, (255, 255, 255), (0,0,10,400))
         self.rect  = self.image.get_rect()
-        self.rect.centerx, self.rect.centery = Rgoal_xy
+        self.rect.center = Rgoal_xy
 
 
 class Goal_Left(Goal_Right):
     def __init__(self, Lgoal_xy):
         #  Rgoal_xy:赤ゴールの座標
         super().__init__(Lgoal_xy)
-        self.rect.centerx, self.rect.centery = Lgoal_xy
+        self.rect.center = Lgoal_xy
 
 
 class Mirror(): #ギミック　関恵尚
@@ -126,7 +121,7 @@ class Mirror(): #ギミック　関恵尚
         self.img.set_colorkey((0,0,0)) #透過
         pg.draw.rect(self.img,color,(0,0,l,h)) #四角生成
         self.rect = self.img.get_rect() #rect
-        self.rect.centerx, self.rect.centery= mxy #中心座標
+        self.rect.center= mxy #中心座標
 
 
 def main():
@@ -140,8 +135,7 @@ def main():
     blue_goal   = Goal_Left((5, 450))
     mirror_up = Mirror((screen.width/2,1),(255, 130, 0),200,10) #加速ギミックコンストラクタ
     mirror_down = Mirror((screen.width/2,screen.height-1),(0,191,255),200,10) #減速ギミックコンストラクタ
-    mirror_up = Mirror((screen.width/2,5),(255, 130, 0),700,10) #加速ギミックコンストラクタ
-    mirror_down = Mirror((screen.width/2,screen.height-5),(0,191,255),400,10) #減速ギミックコンストラクタ
+
     #  変数の定義
     score_red, score_blue = 0, 0      #  青と赤の得点の初期値
     counter_time = 33                 #  試合時間の初期値
@@ -194,42 +188,12 @@ def main():
 
             if pg.sprite.collide_rect(ball,red_goal) :
             #  ボールと赤ゴールが当たったら
-                # C0B21078
-                font = pg.font.Font(None, 100)
-                text = "BLUE GOAL!"
-                text = font.render(text, True, (0, 0, 255))
-                text_rect = text.get_rect()       # Rect
-                text_rect.center = screen.width/2, screen.height/2
-                screen.disp.blit(text, text_rect) # 「BLUE GOAL!」と表示
-                ball.vx *= -1           # 横方向速度の符号反転
-                ball.vy *= -1           # 縦方向速度の符号反転
-                ball.rect.center = screen.width/2, screen.height/2 
-                # C0B21078ここまで
                 score_blue += 1    #  青の得点を増やす
                 sounds[2].play()   #  効果音の再生
-                # C0B21078
-                pg.display.update()
-                pg.time.delay(1000)
-                # C0B21078ここまで
             if pg.sprite.collide_rect(ball, blue_goal):
             #  ボールと青ゴールが当たったら
-                # C0B21078
-                font = pg.font.Font(None, 100)
-                text = "RED GOAL!"
-                text = font.render(text, True, (255, 0, 0))
-                text_rect = text.get_rect()       # Rect
-                text_rect.center = screen.width/2, screen.height/2
-                screen.disp.blit(text, text_rect) # 「RED GOAL!」と表示
-                ball.vx *= -1           # 横方向速度の符号反転
-                ball.vy *= -1           # 縦方向速度の符号反転
-                ball.rect.center = screen.width/2, screen.height/2
-                # C0B21078ここまで
                 score_red += 1     #  赤の得点を増やす
                 sounds[2].play()   #  効果音の再生
-                # C0B21078
-                pg.display.update()
-                pg.time.delay(1000)
-                # C0B21078ここまで
         #  試合後の挙動
         else:
             sounds[0].stop()       #  BGMを止める
