@@ -85,6 +85,13 @@ class Ball():
         if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
             self.vy *= -1.05 #反射と加速
             self.vx *= 1.05  #加速
+
+        if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
+            self.vy *= -0.95 #反射と減速
+            self.vx *= 0.95  #減速
+            self.vy *= -1.2 #反射と加速
+            self.vx *= 1.2  #加速
+
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
             self.vy *= -0.95 #反射と減速
             self.vx *= 0.95  #減速
@@ -94,6 +101,9 @@ class Ball():
         time_sec = time_passed / 1000.0
         #ボールの速度を徐々に加速指せる
         self.rect.move_ip(self.vx*time_sec/20, self.vy*time_sec/20)
+
+        self.rect.move_ip(self.vx*time_sec/7, self.vy*time_sec/7)
+
         #C0B21116
 
 class Goal_Right():
@@ -134,6 +144,10 @@ def main():
     blue_goal   = Goal_Left((5, 450))
     mirror_up = Mirror((screen.width/2,1),(255, 130, 0),200,10) #加速ギミックコンストラクタ
     mirror_down = Mirror((screen.width/2,screen.height-1),(0,191,255),200,10) #減速ギミックコンストラクタ
+
+    mirror_up = Mirror((screen.width/2,5),(255, 130, 0),700,10) #加速ギミックコンストラクタ
+    mirror_down = Mirror((screen.width/2,screen.height-5),(0,191,255),400,10) #減速ギミックコンストラクタ
+
     #  変数の定義
     score_red, score_blue = 0, 0      #  青と赤の得点の初期値
     counter_time = 33                 #  試合時間の初期値
@@ -186,12 +200,42 @@ def main():
 
             if pg.sprite.collide_rect(ball,red_goal) :
             #  ボールと赤ゴールが当たったら
+                # C0B21078
+                font = pg.font.Font(None, 100)
+                text = "BLUE GOAL!"
+                text = font.render(text, True, (0, 0, 255))
+                text_rect = text.get_rect()       # Rect
+                text_rect.center = screen.width/2, screen.height/2
+                screen.disp.blit(text, text_rect) # 「BLUE GOAL!」と表示
+                ball.vx *= -1           # 横方向速度の符号反転
+                ball.vy *= -1           # 縦方向速度の符号反転
+                ball.rect.center = screen.width/2, screen.height/2 
+                # C0B21078ここまで
                 score_blue += 1    #  青の得点を増やす
                 sounds[2].play()   #  効果音の再生
+                # C0B21078
+                pg.display.update()
+                pg.time.delay(1000)
+                # C0B21078ここまで
             if pg.sprite.collide_rect(ball, blue_goal):
             #  ボールと青ゴールが当たったら
+                # C0B21078
+                font = pg.font.Font(None, 100)
+                text = "RED GOAL!"
+                text = font.render(text, True, (255, 0, 0))
+                text_rect = text.get_rect()       # Rect
+                text_rect.center = screen.width/2, screen.height/2
+                screen.disp.blit(text, text_rect) # 「RED GOAL!」と表示
+                ball.vx *= -1           # 横方向速度の符号反転
+                ball.vy *= -1           # 縦方向速度の符号反転
+                ball.rect.center = screen.width/2, screen.height/2
+                # C0B21078ここまで
                 score_red += 1     #  赤の得点を増やす
                 sounds[2].play()   #  効果音の再生
+                # C0B21078
+                pg.display.update()
+                pg.time.delay(1000)
+                # C0B21078ここまで
         #  試合後の挙動
         else:
             sounds[0].stop()       #  BGMを止める

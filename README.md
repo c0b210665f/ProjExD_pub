@@ -216,7 +216,8 @@ def score(score_red, score_blue, screen):
 - game概要:   
     - 初めにマレットはボールを跳ね返す器具である
     - rensyu06/hocke.pyを実行すると、1600x900のウインドウが作成され、マレットを移動させボールを跳ね返し得点を稼ぐゲーム
-- 操作方法：矢印キーで赤いマレットを上下左右に動かし、W,S,A,Dキーで青いマレットを上下左右に動かす
+    - 結果画面で最終結果の点数表示する   # C0B21092 鈴木 
+- 操作方法：矢印キーで赤いマレットを上下左右に動かし、W,S,A,Dキーで青いマレットを上下左右に動かす. Xキーで終了
 - プログラムの説明
     - hocky.pyをコマンドラインから実行すると，pygameの初期化，main関数の順に処理が進む
     - main関数ではスクリーンの生成、赤と青のマレットの生成、ボールの生成、ゴールの生成、BGMの再生を行う
@@ -227,6 +228,7 @@ def score(score_red, score_blue, screen):
     - Ballクラスではコンストラクタで、ボールの大きさ、形、色と座標を設定しているupdateメソッドでは、ボールが画面から出ないように設定している
     - Goal_rightクラスでは、赤のゴールの大きさ、形、色と座標を設定している
     - Goal_Leftクラスでは、Goal_rightクラスを親クラスとして色と座標をオーバーライドしている
+    - Mirrorクラスでは長方形の壁を作り、その壁に当たるとボールが加速または減速する  # C0B21098 関
     - start関数では、試合前の画面にテクストを表示している
     - check_bound関数では、ボールがスクリーンからはみ出ないようにしている
     - check_range_red,check_range_blue関数では、赤と青マレットの移動範囲を設定している
@@ -234,9 +236,15 @@ def score(score_red, score_blue, screen):
     - timer関数ではタイマーのフォントの設定、座標の設定、表示を行っている
     - owari関数では、試合終了後の画面にテキストを表示、テキストは得点によって変わる
     - score関数では、青と赤の得点を表示している
+    - pg.time.get_ticks()関数を使用し、Ballクラスのupdate()内に
+    time_passed = pg.time.get_ticks() - start_time
+    time_sec = time_passed / 1000.0
+    self.rect.move_ip(self.vx * time_sec/20, self.vy * time_sec/20)
+    を追加することでボールの速度を徐々に加速させる　　# C0B21116 寺川
 #### ToDo
 - [ ]ボールを増やす
 - [ ]BGMをボタンによって変更する
+- [ ]ゴール時演出の追加  #C0B21078 柴田恭佑
 
 #### メモ
 class Screen:
