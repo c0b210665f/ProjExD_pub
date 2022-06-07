@@ -1,5 +1,9 @@
 import pygame as pg
 
+#C0B21116
+clock = pg.time.Clock()           #clock関数の設定
+start_time = pg.time.get_ticks()
+#C0B21116
 
 class Screen:
     def __init__(self, wh, title):
@@ -76,7 +80,13 @@ class Ball():
         x, y = check_bound(screen.rect, self.rect)
         self.vx *= x                                  #  横方向に画面外なら，横方向速度の符号反転 
         self.vy *= y                                  #  縦方向に画面外なら，縦方向速度の符号反転
-
+        
+        #C0B21116
+        time_passed = pg.time.get_ticks() - start_time
+        time_sec = time_passed / 1000.0
+        #ボールの速度を徐々に加速指せる
+        self.rect.move_ip(self.vx*time_sec/7, self.vy*time_sec/7)
+        #C0B21116
 
 class Goal_Right():
     def __init__(self, Rgoal_xy):
@@ -162,6 +172,7 @@ def main():
             sounds[0].stop()       #  BGMを止める
             sounds[1].stop()       #  効果音がならないようにする
             owari(score_red, score_blue, screen)
+        
 
         pg.display.update()  
         clock.tick(1000) 
