@@ -6,6 +6,7 @@ clock = pg.time.Clock()           #clock関数の設定
 start_time = pg.time.get_ticks()
 #C0B21116
 
+
 class Screen:
     def __init__(self, wh, title):
         #  wh:幅高さのタプル, title:画面のタイトル
@@ -82,6 +83,11 @@ class Ball():
         self.vx *= x                                  #  横方向に画面外なら，横方向速度の符号反転 
         self.vy *= y                                  #  縦方向に画面外なら，縦方向速度の符号反転
         if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
+            self.vy *= -1.05 #反射と加速
+            self.vx *= 1.05  #加速
+        if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
+            self.vy *= -0.95 #反射と減速
+            self.vx *= 0.95  #減速
             self.vy *= -1.2 #反射と加速
             self.vx *= 1.2  #加速
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
@@ -92,6 +98,7 @@ class Ball():
         time_passed = pg.time.get_ticks() - start_time
         time_sec = time_passed / 1000.0
         #ボールの速度を徐々に加速指せる
+        self.rect.move_ip(self.vx*time_sec/20, self.vy*time_sec/20)
         self.rect.move_ip(self.vx*time_sec/7, self.vy*time_sec/7)
         #C0B21116
 
@@ -131,6 +138,8 @@ def main():
     ball        = Ball((0, 255 ,0), 25, (+2, +2))       
     red_goal    = Goal_Right((1595, 450))
     blue_goal   = Goal_Left((5, 450))
+    mirror_up = Mirror((screen.width/2,1),(255, 130, 0),200,10) #加速ギミックコンストラクタ
+    mirror_down = Mirror((screen.width/2,screen.height-1),(0,191,255),200,10) #減速ギミックコンストラクタ
     mirror_up = Mirror((screen.width/2,5),(255, 130, 0),700,10) #加速ギミックコンストラクタ
     mirror_down = Mirror((screen.width/2,screen.height-5),(0,191,255),400,10) #減速ギミックコンストラクタ
     #  変数の定義
