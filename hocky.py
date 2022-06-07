@@ -29,7 +29,7 @@ class Mallet_red():
         self.image.set_colorkey((0,0,0))              #  黒色部分を透過する
         pg.draw.rect(self.image, (255, 0, 0), (0, 0, 80, 80))
         self.rect  = self.image.get_rect()  #Rectクラス
-        self.rect.centerx, self.rect.centery = red_xy
+        self.rect.center = red_xy
     
     def update(self, screen):
         key_states = pg.key.get_pressed()
@@ -53,7 +53,7 @@ class Mallet_blue(Mallet_red):
         # blue_xy:青マレットの座標タプル
         super().__init__(blue_xy)
         pg.draw.rect(self.image, (0, 0, 255), (0, 0, 80, 80))
-        self.rect.centerx, self.rect.centery = blue_xy
+        self.rect.center = blue_xy
 
     def update(self, screen):
         key_states = pg.key.get_pressed()
@@ -104,14 +104,14 @@ class Goal_Right():
         self.image.set_colorkey((0, 0, 0))
         pg.draw.rect(self.image, (255, 255, 255), (0,0,10,400))
         self.rect  = self.image.get_rect()
-        self.rect.centerx, self.rect.centery = Rgoal_xy
+        self.rect.center = Rgoal_xy
 
 
 class Goal_Left(Goal_Right):
     def __init__(self, Lgoal_xy):
         #  Rgoal_xy:赤ゴールの座標
         super().__init__(Lgoal_xy)
-        self.rect.centerx, self.rect.centery = Lgoal_xy
+        self.rect.center = Lgoal_xy
 
 
 class Mirror(): #ギミック　関恵尚
@@ -121,7 +121,7 @@ class Mirror(): #ギミック　関恵尚
         self.img.set_colorkey((0,0,0)) #透過
         pg.draw.rect(self.img,color,(0,0,l,h)) #四角生成
         self.rect = self.img.get_rect() #rect
-        self.rect.centerx, self.rect.centery= mxy #中心座標
+        self.rect.center= mxy #中心座標
 
 
 def main():
