@@ -37,7 +37,7 @@ class Mallet_red():
             if key_states[key] == True:
                 self.rect.centerx += delta[0]
                 self.rect.centery += delta[1]
-            if check_range_red(screen.rect, self.rect) != (1,1): 
+            if check_range(screen.rect, self.rect) != (1,1): 
                 self.rect.centerx -= delta[0]
                 self.rect.centery -= delta[1]
 
@@ -61,7 +61,7 @@ class Mallet_blue(Mallet_red):
             if key_states[key] == True:
                 self.rect.centerx += delta[0]
                 self.rect.centery += delta[1]
-            if check_range_blue(screen.rect, self.rect) != (1,1): 
+            if check_range(screen.rect, self.rect) != (1,1): 
                 self.rect.centerx -= delta[0]
                 self.rect.centery -= delta[1]
 
@@ -85,25 +85,21 @@ class Ball():
         if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
             self.vy *= -1.05 #反射と加速
             self.vx *= 1.05  #加速
-
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
             self.vy *= -0.95 #反射と減速
             self.vx *= 0.95  #減速
             self.vy *= -1.2 #反射と加速
             self.vx *= 1.2  #加速
-
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
-            self.vy *= -0.95 #反射と減速
-            self.vx *= 0.95  #減速
+            self.vy *= -0.9 #反射と減速
+            self.vx *= 0.9  #減速
         
         #C0B21116
         time_passed = pg.time.get_ticks() - start_time
         time_sec = time_passed / 1000.0
         #ボールの速度を徐々に加速指せる
         self.rect.move_ip(self.vx*time_sec/20, self.vy*time_sec/20)
-
         self.rect.move_ip(self.vx*time_sec/7, self.vy*time_sec/7)
-
         #C0B21116
 
 class Goal_Right():
@@ -144,10 +140,8 @@ def main():
     blue_goal   = Goal_Left((5, 450))
     mirror_up = Mirror((screen.width/2,1),(255, 130, 0),200,10) #加速ギミックコンストラクタ
     mirror_down = Mirror((screen.width/2,screen.height-1),(0,191,255),200,10) #減速ギミックコンストラクタ
-
     mirror_up = Mirror((screen.width/2,5),(255, 130, 0),700,10) #加速ギミックコンストラクタ
     mirror_down = Mirror((screen.width/2,screen.height-5),(0,191,255),400,10) #減速ギミックコンストラクタ
-
     #  変数の定義
     score_red, score_blue = 0, 0      #  青と赤の得点の初期値
     counter_time = 33                 #  試合時間の初期値
@@ -194,8 +188,8 @@ def main():
             screen.disp.blit(mirror_down.img,mirror_down.rect)
             #　関数の呼び出し
             score(score_red, score_blue, screen)
-            red_bound(ball, mallet_red, sounds)
-            blue_bound(ball, mallet_blue, sounds)
+            bound(ball, mallet_red, sounds)
+            bound(ball, mallet_blue, sounds)
             timer(counter_time,screen)
 
             if pg.sprite.collide_rect(ball,red_goal) :
@@ -263,43 +257,25 @@ def check_bound(sc_r, obj_r):
     return x, y
 
 #  赤マレットの移動範囲設定
-def check_range_red(sc_r, obj_r): 
+def check_range(sc_r, obj_r): 
     x, y = +1, +1
     if obj_r.left < (sc_r.right)/2+40 or sc_r.right  < obj_r.right : x = -1
+    elif obj_r.right > (sc_r.right)/2+40 or sc_r.left  > obj_r.left : x = -1
     if obj_r.top  < sc_r.top  or sc_r.bottom < obj_r.bottom: y = -1
-    return x, y
-
-#  青マレットの移動範囲設定
-def check_range_blue(sc_r, obj_r): 
-    x, y = +1, +1
-    if obj_r.right > (sc_r.right)/2+40 or sc_r.left  > obj_r.left : x = -1
-    if obj_r.top  < sc_r.top  or sc_r.bottom < obj_r.bottom: y = -1
+    elif obj_r.top  < sc_r.top  or sc_r.bottom < obj_r.bottom: y = -1
     return x, y
 
 #  ボールと赤マレットの当たり判定
-def red_bound(ball, mallet_red, sounds):
-     #  ballとmallet_redが当たったら
-    if pg.sprite.collide_rect(ball,mallet_red) :  
+def bound(ball, mallet, sounds):
+     #  ballとmalletが当たったら
+    if pg.sprite.collide_rect(ball,mallet) :  
         sounds[1].play()  #  効果音を再生
         #  当たった時のボールの位置でバウンド方向を変える
-        if mallet_red.rect.centery-40 <= ball.rect.centery\
-            <= mallet_red.rect.centery+40:
+        if mallet.rect.centery-40 <= ball.rect.centery\
+            <= mallet.rect.centery+40:
                 ball.vx *= -1
-        if mallet_red.rect.centerx-40 <= ball.rect.centerx\
-            <= mallet_red.rect.centerx+40:
-                ball.vy *= -1
-
-#  ボールと青マレットの当たり判定
-def blue_bound(ball, mallet_blue, sounds):
-    #  ballとmallet_blueが当たったら
-    if pg.sprite.collide_rect(ball,mallet_blue) :
-        sounds[1].play()  #  効果音を再生
-        #  当たった時のボールの位置でバウンド方向を変える
-        if mallet_blue.rect.centery-40 <= ball.rect.centery\
-            <= mallet_blue.rect.centery+40:
-                ball.vx *= -1
-        if mallet_blue.rect.centerx-40 <= ball.rect.centerx\
-            <= mallet_blue.rect.centerx+40:
+        if mallet.rect.centerx-40 <= ball.rect.centerx\
+            <= mallet.rect.centerx+40:
                 ball.vy *= -1
 
 # タイマー表示
