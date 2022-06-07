@@ -1,5 +1,10 @@
+from turtle import color
 import pygame as pg
 
+#C0B21116
+clock = pg.time.Clock()           #clock関数の設定
+start_time = pg.time.get_ticks()
+#C0B21116
 
 class Screen:
     def __init__(self, wh, title):
@@ -82,6 +87,13 @@ class Ball():
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
             self.vy *= -0.9 #反射と減速
             self.vx *= 0.9  #減速
+        
+        #C0B21116
+        time_passed = pg.time.get_ticks() - start_time
+        time_sec = time_passed / 1000.0
+        #ボールの速度を徐々に加速指せる
+        self.rect.move_ip(self.vx*time_sec/7, self.vy*time_sec/7)
+        #C0B21116
 
 class Goal_Right():
     def __init__(self, Rgoal_xy):
@@ -184,6 +196,7 @@ def main():
             sounds[0].stop()       #  BGMを止める
             sounds[1].stop()       #  効果音がならないようにする
             owari(score_red, score_blue, screen)
+        
 
         pg.display.update()  
         clock.tick(1000) 
@@ -265,11 +278,17 @@ def owari(score_red, score_blue, screen):
           text = text_lst[2]
     #  DRAWの場合だけ表示座標をずらす
     if text == "DRAW":
-        text   = font.render(text, True, (255,255,0))
+        text   = font.render(text, True, (255, 255, 0))
         screen.disp.blit(text, (500, 20))
     else:
-        text   = font.render(text, True, (255,255,0))
+        text   = font.render(text, True,(255, 255, 0))
         screen.disp.blit(text, (300, 20))
+    text_red = font.render(str(int(score_red)), True, (255,0, 0))       #鈴木飛鳥
+    text_blue = font.render(str(int(score_blue)), True, (0,0, 255))     #鈴木飛鳥
+    text_minus = font.render("-", True, (255,255, 255))                 #鈴木飛鳥
+    screen.disp.blit(text_red, (600, 300))                              #鈴木飛鳥
+    screen.disp.blit(text_minus, (775, 300))                            #鈴木飛鳥
+    screen.disp.blit(text_blue, (900, 300))                             #鈴木飛鳥
 
 #  得点表示
 def score(score_red, score_blue, screen):
