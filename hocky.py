@@ -76,11 +76,11 @@ class Ball():
         x, y = check_bound(screen.rect, self.rect)
         self.vx *= x                                  #  横方向に画面外なら，横方向速度の符号反転 
         self.vy *= y                                  #  縦方向に画面外なら，縦方向速度の符号反転
-        if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら
+        if mirror_up.rect.colliderect(self.rect): #加速ミラーに当たったら 関恵尚
             self.vy *= -1.3 #反射と加速
             self.vx *= 1.3  #加速
         if mirror_down.rect.colliderect(self.rect): #減速ミラーに当たったら
-            self.vy *= -1 #反射と減速
+            self.vy *= -0.9 #反射と減速
             self.vx *= 0.9  #減速
 
 class Goal_Right():
