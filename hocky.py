@@ -1,3 +1,4 @@
+from turtle import color
 import pygame as pg
 
 
@@ -243,11 +244,17 @@ def owari(score_red, score_blue, screen):
           text = text_lst[2]
     #  DRAWの場合だけ表示座標をずらす
     if text == "DRAW":
-        text   = font.render(text, True, (255,255,0))
+        text   = font.render(text, True, (255, 255, 0))
         screen.disp.blit(text, (500, 20))
     else:
-        text   = font.render(text, True, (255,255,0))
+        text   = font.render(text, True,(255, 255, 0))
         screen.disp.blit(text, (300, 20))
+    text_red = font.render(str(int(score_red)), True, (255,0, 0))       #鈴木飛鳥
+    text_blue = font.render(str(int(score_blue)), True, (0,0, 255))     #鈴木飛鳥
+    text_minus = font.render("-", True, (255,255, 255))                 #鈴木飛鳥
+    screen.disp.blit(text_red, (600, 300))                              #鈴木飛鳥
+    screen.disp.blit(text_minus, (775, 300))                            #鈴木飛鳥
+    screen.disp.blit(text_blue, (900, 300))                             #鈴木飛鳥
 
 #  得点表示
 def score(score_red, score_blue, screen):
